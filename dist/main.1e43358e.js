@@ -31775,7 +31775,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       return _react.default.createElement("div", {
-        className: "Hi"
+        className: "hi"
       }, "Hi!");
     }
   }]);
