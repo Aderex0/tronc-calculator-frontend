@@ -31730,7 +31730,86 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"src/App.js":[function(require,module,exports) {
+},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"src/components/TroncCalculator.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var TroncCalculator = function TroncCalculator(_ref) {
+  var setTroncOutput = _ref.setTroncOutput;
+
+  var _useState = (0, _react.useState)(null),
+      _useState2 = _slicedToArray(_useState, 2),
+      troncPercentage = _useState2[0],
+      setTroncPercentage = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(null),
+      _useState4 = _slicedToArray(_useState3, 2),
+      serviceCharge = _useState4[0],
+      setServiceCharge = _useState4[1];
+
+  var _useState5 = (0, _react.useState)(null),
+      _useState6 = _slicedToArray(_useState5, 2),
+      checksPaid = _useState6[0],
+      setChecksPaid = _useState6[1];
+
+  var doTroncCalculation = function doTroncCalculation() {
+    var sales = checksPaid - serviceCharge;
+    return sales - sales / 100 * troncPercentage;
+  };
+
+  return _react.default.createElement("form", {
+    onSubmit: function onSubmit() {
+      return setTroncOutput(doTroncCalculation);
+    }
+  }, _react.default.createElement("input", {
+    className: "tronc-percentage-field",
+    onChange: function onChange() {
+      return setTroncPercentage;
+    },
+    type: "number",
+    value: troncPercentage
+  }), _react.default.createElement("input", {
+    className: "service-charge-field",
+    onChange: function onChange() {
+      return setServiceCharge;
+    },
+    type: "number",
+    value: serviceCharge
+  }), _react.default.createElement("input", {
+    className: "checks-paid-field",
+    onChange: function onChange() {
+      return setChecksPaid;
+    },
+    type: "number",
+    value: checksPaid
+  }), _react.default.createElement("input", {
+    className: "calculate-tronc-btn",
+    type: "submit",
+    value: "Calculate!"
+  }));
+};
+
+var _default = TroncCalculator;
+exports.default = _default;
+},{"react":"node_modules/react/index.js"}],"src/components/TroncOutput.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31739,6 +31818,29 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TroncOutput = function TroncOutput(_ref) {
+  var troncOutput = _ref.troncOutput;
+  return _react.default.createElement("div", null, troncOutput);
+};
+
+var _default = TroncOutput;
+exports.default = _default;
+},{"react":"node_modules/react/index.js"}],"src/App.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _TroncCalculator = _interopRequireDefault(require("./components/TroncCalculator"));
+
+var _TroncOutput = _interopRequireDefault(require("./components/TroncOutput"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31752,13 +31854,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var App =
 /*#__PURE__*/
@@ -31766,17 +31870,44 @@ function (_React$Component) {
   _inherits(App, _React$Component);
 
   function App() {
+    var _getPrototypeOf2;
+
+    var _this;
+
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(App).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(App)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this), "state", {
+      troncOutput: null,
+      displayCalculator: true
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "setTroncOutput", function (troncOutput) {
+      _this.setState({
+        troncOutput: troncOutput,
+        displayCalculator: false
+      });
+    });
+
+    return _this;
   }
 
   _createClass(App, [{
     key: "render",
     value: function render() {
-      return _react.default.createElement("div", {
-        className: "Hi"
-      }, "Hi!");
+      var _this$state = this.state,
+          troncOutput = _this$state.troncOutput,
+          displayCalculator = _this$state.displayCalculator;
+      return _react.default.createElement("div", null, displayCalculator ? _react.default.createElement(_TroncCalculator.default, {
+        setTroncOutput: this.setTroncOutput
+      }) : _react.default.createElement(_TroncOutput.default, {
+        troncOutput: troncOutput
+      }));
     }
   }]);
 
@@ -31785,7 +31916,7 @@ function (_React$Component) {
 
 var _default = App;
 exports.default = _default;
-},{"react":"node_modules/react/index.js"}],"src/main.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","./components/TroncCalculator":"src/components/TroncCalculator.js","./components/TroncOutput":"src/components/TroncOutput.js"}],"src/main.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -31827,7 +31958,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59124" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61620" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
