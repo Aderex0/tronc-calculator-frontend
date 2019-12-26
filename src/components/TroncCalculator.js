@@ -1,39 +1,63 @@
 import React, { useState } from 'react'
 
-const TroncCalculator = ({ setTroncOutput }) => {
-  const [troncPercentage, setTroncPercentage] = useState(null)
-  const [serviceCharge, setServiceCharge] = useState(null)
-  const [checksPaid, setChecksPaid] = useState(null)
+const TroncCalculator = ({ setReceivedServiceCharge }) => {
+  const [troncPercentage, setTroncPercentage] = useState(3.75)
+  const [serviceCharge, setServiceCharge] = useState(0.0)
+  const [checksPaid, setChecksPaid] = useState(0.0)
 
-  const doTroncCalculation = () => {
+  const handleTroncPercentage = event => {
+    const percentage = event.target.value
+    setTroncPercentage(parseFloat(percentage))
+  }
+
+  const handleServiceCharge = event => {
+    const service = event.target.value
+    setServiceCharge(parseFloat(service))
+  }
+
+  const handleChecksPaid = event => {
+    const checks = event.target.value
+    setChecksPaid(parseFloat(checks))
+  }
+
+  const handleTroncCalculation = event => {
+    event.preventDefault()
+
     const sales = checksPaid - serviceCharge
-    return sales - (sales / 100) * troncPercentage
+    const receivedServiceCharge =
+      serviceCharge - (sales / 100) * troncPercentage
+
+    setReceivedServiceCharge(parseFloat(receivedServiceCharge.toFixed(2)))
   }
 
   return (
-    <form onSubmit={() => setTroncOutput(doTroncCalculation)}>
+    <form onSubmit={handleTroncCalculation}>
       <input
         className='tronc-percentage-field'
-        onChange={() => setTroncPercentage}
+        onChange={handleTroncPercentage}
         type='number'
-        value={troncPercentage}
+        step='any'
+        placeholder='3.75'
       ></input>
       <input
         className='service-charge-field'
-        onChange={() => setServiceCharge}
+        onChange={handleServiceCharge}
         type='number'
-        value={serviceCharge}
+        step='any'
+        placeholder='0.00'
       ></input>
       <input
         className='checks-paid-field'
-        onChange={() => setChecksPaid}
+        onChange={handleChecksPaid}
         type='number'
-        value={checksPaid}
+        step='any'
+        placeholder='0.00'
       ></input>
       <input
         className='calculate-tronc-btn'
         type='submit'
         value='Calculate!'
+        step='any'
       ></input>
     </form>
   )

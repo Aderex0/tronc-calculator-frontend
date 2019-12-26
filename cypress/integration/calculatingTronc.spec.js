@@ -25,6 +25,6 @@ describe('Calculating Tronc', () => {
 
     cy.get('calculate-tronc-btn').should('not.exist')
 
-    cy.contains((serviceCharge - (sales / 100) * 3.75).toFixed(2))
+    cy.contains((serviceCharge - (sales / 100) * troncPercentage).toFixed(2))
   })
 })

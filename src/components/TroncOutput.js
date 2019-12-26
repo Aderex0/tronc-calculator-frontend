@@ -1,7 +1,7 @@
 import React from 'react'
 
-const TroncOutput = ({ troncOutput }) => {
-  return <div>{troncOutput}</div>
+const TroncOutput = ({ receivedServiceCharge }) => {
+  return <div>{receivedServiceCharge}</div>
 }
 
 export default TroncOutput
