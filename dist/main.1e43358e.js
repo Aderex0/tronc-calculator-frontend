@@ -31730,7 +31730,180 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"src/components/TroncOutput.js":[function(require,module,exports) {
+},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"node_modules/zustand/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.create = create;
+exports.default = void 0;
+
+var _react = require("react");
+
+const useIsoLayoutEffect = typeof window === 'undefined' ? _react.useEffect : _react.useLayoutEffect;
+
+function create(createState) {
+  let state;
+  let subscribers = [];
+  let subscriberCount = 0;
+
+  const setState = partial => {
+    const partialState = typeof partial === 'function' ? partial(state) : partial;
+
+    if (partialState !== state) {
+      state = Object.assign({}, state, partialState); // Reset subscriberCount because we will be removing holes from the
+      // subscribers array and changing the length which should be the same as
+      // subscriberCount.
+
+      subscriberCount = 0; // Create a dense array by removing holes from the subscribers array.
+      // Holes are not iterated by Array.prototype.filter.
+
+      subscribers = subscribers.filter(subscriber => {
+        subscriber.index = subscriberCount++;
+        return true;
+      }); // Call all subscribers only after the subscribers array has been changed
+      // to a dense array. Subscriber callbacks cannot be called above in
+      // subscribers.filter because the callbacks can cause a synchronous
+      // increment of subscriberCount if not batched.
+
+      subscribers.forEach(subscriber => subscriber.callback());
+    }
+  };
+
+  const getState = () => state;
+
+  const getSubscriber = (listener, selector = getState, equalityFn = Object.is) => ({
+    callback: () => {},
+    currentSlice: selector(state),
+    equalityFn,
+    errored: false,
+    index: subscriberCount++,
+    listener,
+    selector
+  });
+
+  const subscribe = subscriber => {
+    subscriber.callback = () => {
+      // Selector or equality function could throw but we don't want to stop
+      // the listener from being called.
+      // https://github.com/react-spring/zustand/pull/37
+      try {
+        const newStateSlice = subscriber.selector(state);
+
+        if (!subscriber.equalityFn(subscriber.currentSlice, newStateSlice)) {
+          subscriber.listener(subscriber.currentSlice = newStateSlice);
+        }
+      } catch (error) {
+        subscriber.errored = true;
+        subscriber.listener(null, error);
+      }
+    }; // subscriber.index is set during the render phase in order to store the
+    // subscibers in a top-down order. The subscribers array will become a
+    // sparse array when an index is skipped (due to an interrupted render) or
+    // a component unmounts and the subscriber is deleted. It's converted back
+    // to a dense array in setState.
+
+
+    subscribers[subscriber.index] = subscriber; // Delete creates a hole and preserves the array length. If we used
+    // Array.prototype.splice, subscribers with a greater subscriber.index
+    // would no longer match their actual index in subscribers.
+
+    return () => delete subscribers[subscriber.index];
+  };
+
+  const apiSubscribe = (listener, selector, equalityFn) => subscribe(getSubscriber(listener, selector, equalityFn));
+
+  const destroy = () => subscribers = [];
+
+  const useStore = (selector = getState, equalityFn = Object.is) => {
+    const forceUpdate = (0, _react.useReducer)(c => c + 1, 0)[1];
+    const subscriberRef = (0, _react.useRef)();
+
+    if (!subscriberRef.current) {
+      subscriberRef.current = getSubscriber(forceUpdate, selector, equalityFn);
+    }
+
+    const subscriber = subscriberRef.current;
+    let newStateSlice;
+    let hasNewStateSlice = false; // The selector or equalityFn need to be called during the render phase if
+    // they change. We also want legitimate errors to be visible so we re-run
+    // them if they errored in the subscriber.
+
+    if (subscriber.selector !== selector || subscriber.equalityFn !== equalityFn || subscriber.errored) {
+      // Using local variables to avoid mutations in the render phase.
+      newStateSlice = selector(state);
+      hasNewStateSlice = !equalityFn(subscriber.currentSlice, newStateSlice);
+    } // Syncing changes in useEffect.
+
+
+    useIsoLayoutEffect(() => {
+      if (hasNewStateSlice) {
+        subscriber.currentSlice = newStateSlice;
+      }
+
+      subscriber.selector = selector;
+      subscriber.equalityFn = equalityFn;
+      subscriber.errored = false;
+    });
+    useIsoLayoutEffect(() => subscribe(subscriber), []);
+    return hasNewStateSlice ? newStateSlice : subscriber.currentSlice;
+  };
+
+  const api = {
+    setState,
+    getState,
+    subscribe: apiSubscribe,
+    destroy
+  };
+  state = createState(setState, getState, api);
+  return [useStore, api];
+}
+
+var _default = create;
+exports.default = _default;
+},{"react":"node_modules/react/index.js"}],"src/store/TroncCalculatorStore.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _zustand = _interopRequireDefault(require("zustand"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var _setReceivedServiceCharge = function setReceivedServiceCharge(troncDeduction) {
+  return {
+    receivedServiceCharge: troncDeduction,
+    displayCalculator: false
+  };
+};
+
+var _create = (0, _zustand.default)(function (set) {
+  return {
+    receivedServiceCharge: 0,
+    displayCalculator: true,
+    setReceivedServiceCharge: function setReceivedServiceCharge(troncDeductions) {
+      return set(_setReceivedServiceCharge(troncDeductions));
+    }
+  };
+}),
+    _create2 = _slicedToArray(_create, 1),
+    useTroncCalculatorStore = _create2[0];
+
+var _default = useTroncCalculatorStore;
+exports.default = _default;
+},{"zustand":"node_modules/zustand/index.js"}],"src/components/TroncOutput.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31740,16 +31913,20 @@ exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
+var _TroncCalculatorStore = _interopRequireDefault(require("../store/TroncCalculatorStore"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var TroncOutput = function TroncOutput(_ref) {
-  var receivedServiceCharge = _ref.receivedServiceCharge;
+var TroncOutput = function TroncOutput() {
+  var receivedServiceCharge = (0, _TroncCalculatorStore.default)(function (state) {
+    return state.receivedServiceCharge;
+  });
   return _react.default.createElement("div", null, receivedServiceCharge);
 };
 
 var _default = TroncOutput;
 exports.default = _default;
-},{"react":"node_modules/react/index.js"}],"src/components/TroncCalculator.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","../store/TroncCalculatorStore":"src/store/TroncCalculatorStore.js"}],"src/components/TroncCalculator.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31758,6 +31935,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
+
+var _TroncCalculatorStore = _interopRequireDefault(require("../store/TroncCalculatorStore"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -31771,43 +31952,48 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-var TroncCalculator = function TroncCalculator(_ref) {
-  var setReceivedServiceCharge = _ref.setReceivedServiceCharge;
-
+var TroncCalculator = function TroncCalculator() {
+  //Controlled Form >> start
   var _useState = (0, _react.useState)(3.75),
       _useState2 = _slicedToArray(_useState, 2),
-      troncPercentage = _useState2[0],
-      setTroncPercentage = _useState2[1];
+      troncPercent = _useState2[0],
+      setTroncPercent = _useState2[1];
+
+  var handleTroncPercentage = function handleTroncPercentage(e) {
+    return setTroncPercent(parseFloat(e.target.value));
+  };
 
   var _useState3 = (0, _react.useState)(0.0),
       _useState4 = _slicedToArray(_useState3, 2),
       serviceCharge = _useState4[0],
       setServiceCharge = _useState4[1];
 
+  var handleServiceCharge = function handleServiceCharge(e) {
+    return setServiceCharge(parseFloat(e.target.value));
+  };
+
   var _useState5 = (0, _react.useState)(0.0),
       _useState6 = _slicedToArray(_useState5, 2),
       checksPaid = _useState6[0],
       setChecksPaid = _useState6[1];
 
-  var handleTroncPercentage = function handleTroncPercentage(event) {
-    var percentage = event.target.value;
-    setTroncPercentage(parseFloat(percentage));
-  };
+  var handleChecksPaid = function handleChecksPaid(e) {
+    return setChecksPaid(parseFloat(e.target.value));
+  }; // Controlled Form >> end
+  // State Store
 
-  var handleServiceCharge = function handleServiceCharge(event) {
-    var service = event.target.value;
-    setServiceCharge(parseFloat(service));
-  };
 
-  var handleChecksPaid = function handleChecksPaid(event) {
-    var checks = event.target.value;
-    setChecksPaid(parseFloat(checks));
-  };
+  var setReceivedServiceCharge = (0, _TroncCalculatorStore.default)(function (state) {
+    return state.setReceivedServiceCharge;
+  });
 
   var handleTroncCalculation = function handleTroncCalculation(event) {
     event.preventDefault();
     var sales = checksPaid - serviceCharge;
-    var receivedServiceCharge = serviceCharge - sales / 100 * troncPercentage;
+    var receivedServiceCharge = serviceCharge - sales / 100 * troncPercent;
+    setTroncPercent(3.75);
+    setServiceCharge(0.0);
+    setChecksPaid(0.0);
     setReceivedServiceCharge(parseFloat(receivedServiceCharge.toFixed(2)));
   };
 
@@ -31841,7 +32027,7 @@ var TroncCalculator = function TroncCalculator(_ref) {
 
 var _default = TroncCalculator;
 exports.default = _default;
-},{"react":"node_modules/react/index.js"}],"src/containers/TroncCalculatorContainer.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","../store/TroncCalculatorStore":"src/store/TroncCalculatorStore.js"}],"src/containers/TroncCalculatorContainer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31855,44 +32041,25 @@ var _TroncOutput = _interopRequireDefault(require("../components/TroncOutput"));
 
 var _TroncCalculator = _interopRequireDefault(require("../components/TroncCalculator"));
 
+var _TroncCalculatorStore = _interopRequireDefault(require("../store/TroncCalculatorStore"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 var TroncCalculatorContainer = function TroncCalculatorContainer() {
-  var _useState = (0, _react.useState)(0),
-      _useState2 = _slicedToArray(_useState, 2),
-      receivedServiceCharge = _useState2[0],
-      setReceivedServiceCharge = _useState2[1];
-
-  var _useState3 = (0, _react.useState)(false),
-      _useState4 = _slicedToArray(_useState3, 2),
-      displayCalculator = _useState4[0],
-      setDisplayCalculator = _useState4[1];
-
-  (0, _react.useEffect)(function () {
-    setDisplayCalculator(!displayCalculator);
-  }, [receivedServiceCharge]);
-  return _react.default.createElement("div", null, displayCalculator ? _react.default.createElement(_TroncCalculator.default, {
-    setReceivedServiceCharge: setReceivedServiceCharge
-  }) : _react.default.createElement(_TroncOutput.default, {
-    receivedServiceCharge: receivedServiceCharge
-  }));
+  var displayCalculator = (0, _TroncCalculatorStore.default)(function (state) {
+    return state.displayCalculator;
+  });
+  (0, _react.useEffect)(function () {});
+  return _react.default.createElement("div", null, displayCalculator ? _react.default.createElement(_TroncCalculator.default, null) : _react.default.createElement(_TroncOutput.default, null));
 };
 
 var _default = TroncCalculatorContainer;
 exports.default = _default;
-},{"react":"node_modules/react/index.js","../components/TroncOutput":"src/components/TroncOutput.js","../components/TroncCalculator":"src/components/TroncCalculator.js"}],"src/App.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","../components/TroncOutput":"src/components/TroncOutput.js","../components/TroncCalculator":"src/components/TroncCalculator.js","../store/TroncCalculatorStore":"src/store/TroncCalculatorStore.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

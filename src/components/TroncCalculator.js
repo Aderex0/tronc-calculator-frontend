@@ -1,31 +1,32 @@
 import React, { useState } from 'react'
 
-const TroncCalculator = ({ setReceivedServiceCharge }) => {
-  const [troncPercentage, setTroncPercentage] = useState(3.75)
+import useTroncCalculatorStore from '../store/TroncCalculatorStore'
+
+const TroncCalculator = () => {
+  //Controlled Form >> start
+  const [troncPercent, setTroncPercent] = useState(3.75)
+  const handleTroncPercentage = e => setTroncPercent(parseFloat(e.target.value))
+
   const [serviceCharge, setServiceCharge] = useState(0.0)
+  const handleServiceCharge = e => setServiceCharge(parseFloat(e.target.value))
+
   const [checksPaid, setChecksPaid] = useState(0.0)
+  const handleChecksPaid = e => setChecksPaid(parseFloat(e.target.value))
+  // Controlled Form >> end
 
-  const handleTroncPercentage = event => {
-    const percentage = event.target.value
-    setTroncPercentage(parseFloat(percentage))
-  }
-
-  const handleServiceCharge = event => {
-    const service = event.target.value
-    setServiceCharge(parseFloat(service))
-  }
-
-  const handleChecksPaid = event => {
-    const checks = event.target.value
-    setChecksPaid(parseFloat(checks))
-  }
+  // State Store
+  const setReceivedServiceCharge = useTroncCalculatorStore(
+    state => state.setReceivedServiceCharge
+  )
 
   const handleTroncCalculation = event => {
     event.preventDefault()
 
     const sales = checksPaid - serviceCharge
-    const receivedServiceCharge =
-      serviceCharge - (sales / 100) * troncPercentage
+    const receivedServiceCharge = serviceCharge - (sales / 100) * troncPercent
+    setTroncPercent(3.75)
+    setServiceCharge(0.0)
+    setChecksPaid(0.0)
 
     setReceivedServiceCharge(parseFloat(receivedServiceCharge.toFixed(2)))
   }

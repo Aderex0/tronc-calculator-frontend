@@ -1,24 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import TroncOutput from '../components/TroncOutput'
 import TroncCalculator from '../components/TroncCalculator'
 
+import useTroncCalculatorStore from '../store/TroncCalculatorStore'
+
 const TroncCalculatorContainer = () => {
-  const [receivedServiceCharge, setReceivedServiceCharge] = useState(0)
-  const [displayCalculator, setDisplayCalculator] = useState(false)
-
-  useEffect(() => {
-    setDisplayCalculator(!displayCalculator)
-  }, [receivedServiceCharge])
-
-  return (
-    <div>
-      {displayCalculator ? (
-        <TroncCalculator setReceivedServiceCharge={setReceivedServiceCharge} />
-      ) : (
-        <TroncOutput receivedServiceCharge={receivedServiceCharge} />
-      )}
-    </div>
+  const displayCalculator = useTroncCalculatorStore(
+    state => state.displayCalculator
   )
+
+  useEffect(() => {})
+
+  return <div>{displayCalculator ? <TroncCalculator /> : <TroncOutput />}</div>
 }
 
 export default TroncCalculatorContainer
