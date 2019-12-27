@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Input from '../styled_components/tronc_calculator_form_input'
 
 import useTroncCalculatorStore from '../store/TroncCalculatorStore'
 
@@ -33,33 +34,44 @@ const TroncCalculator = () => {
 
   return (
     <form onSubmit={handleTroncCalculation}>
-      <input
+      <label>Tronc rate</label>
+      <Input
         className='tronc-percentage-field'
         onChange={handleTroncPercentage}
         type='number'
         step='any'
         placeholder='3.75'
-      ></input>
-      <input
+      />
+      <label>Service charge</label>
+      <Input
         className='service-charge-field'
         onChange={handleServiceCharge}
         type='number'
         step='any'
-        placeholder='0.00'
-      ></input>
-      <input
+        placeholder='76.40'
+      />
+      <label>Checks paid</label>
+      <Input
         className='checks-paid-field'
         onChange={handleChecksPaid}
         type='number'
         step='any'
-        placeholder='0.00'
-      ></input>
-      <input
+        placeholder='685.98'
+      />
+      <label>Cash tips (optional)</label>
+      <Input className='cash-tips-field' type='number' placeholder='55.50' />
+      <label>Shift start (optional)</label>
+      <Input className='start-hours-field' type='number' />
+      <Input className='start-minutes-field' type='number' />
+      <label>Shift End (optional)</label>
+      <Input className='end-hours-field' type='number' />
+      <Input className='end-minutes-field' type='number' />
+      <Input
         className='calculate-tronc-btn'
         type='submit'
         value='Calculate!'
         step='any'
-      ></input>
+      />
     </form>
   )
 }

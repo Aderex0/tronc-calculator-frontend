@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:1234'
 
-describe('Calculating Tronc', () => {
+describe('Calculating Tronc and pay', () => {
   const troncPercentage = (3.75).toFixed(2)
   const checksPaid = (1543.59).toFixed(2)
   const serviceCharge = (165.4).toFixed(2)

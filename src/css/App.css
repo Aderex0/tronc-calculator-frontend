@@ -1,0 +1,7 @@
+.main-container {
+  display: grid;
+  grid-template-areas:
+    'navbar'
+    'calculator';
+  grid-template-rows: 1fr 7fr;
+}

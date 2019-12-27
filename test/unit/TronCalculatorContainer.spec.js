@@ -1,5 +1,6 @@
 import React from 'react'
 import { mount, shallow } from 'enzyme'
+
 import TroncCalculator from '../../src/components/TroncCalculator'
 import TroncOutput from '../../src/components/TroncOutput'
 
@@ -8,18 +9,27 @@ describe('Tron Calculator Form', () => {
     shallow(<TroncCalculator />)
   })
 
-  it('Calculates the tronc onSubmit', () => {
+  it('calculates the tronc and salary onSubmit', () => {
     const wrapper = mount(<TroncCalculator />)
     wrapper
-      .find('.tronc-percentage-field')
+      .find('input.tronc-percentage-field')
       .simulate('change', { target: { value: 3.75 } })
     wrapper
-      .find('.service-charge-field')
+      .find('input.service-charge-field')
       .simulate('change', { target: { value: 123.0 } })
     wrapper
-      .find('.checks-paid-field')
+      .find('input.checks-paid-field')
       .simulate('change', { target: { value: 1230.0 } })
-    wrapper.find('.calculate-tronc-btn').simulate('submit')
+    wrapper
+      .find('input.cash-tips-field')
+      .simulate('change', { target: { value: 23.5 } })
+    wrapper
+      .find('input.start-hours-field')
+      .simulate('change', { target: { value: 17.0 } })
+    wrapper
+      .find('input.end-hours-field')
+      .simulate('change', { target: { value: 23.3 } })
+    wrapper.find('input.calculate-tronc-btn').simulate('submit')
   })
 
   it('renders service output', () => {

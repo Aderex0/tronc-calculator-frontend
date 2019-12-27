@@ -1,4 +1,6 @@
 import React from 'react'
+import '../css/TroncCalculatorContainer.css'
+
 import TroncOutput from '../components/TroncOutput'
 import TroncCalculator from '../components/TroncCalculator'
 
@@ -9,7 +11,7 @@ const TroncCalculatorContainer = () => {
     state => state.displayCalculator
   )
 
-  return <div>{displayCalculator ? <TroncCalculator /> : <TroncOutput />}</div>
+  return <>{displayCalculator ? <TroncCalculator /> : <TroncOutput />}</>
 }
 
 export default TroncCalculatorContainer

@@ -1,0 +1,23 @@
+.main-container {
+  display: grid;
+  grid-template-areas:
+    'navbar'
+    'calculator';
+  grid-template-rows: 1fr 7fr;
+}
+
+form {
+  grid-area: calculator;
+  justify-self: center;
+  margin-top: 5%;
+  font-family: Helvetica, sans-serif;
+  text-align: center;
+  color: rgb(70, 70, 70);
+}
+
+form label {
+  font-size: 1.5em;
+}
+
+
+/*# sourceMappingURL=/main.1e43358e.css.map */

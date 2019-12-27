@@ -1,0 +1,6 @@
+.nav-bar-container {
+  grid-area: navbar;
+  width: 100%;
+  height: 100%;
+  background-color: palevioletred;
+}

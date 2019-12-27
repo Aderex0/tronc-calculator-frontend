@@ -1,0 +1,12 @@
+form {
+  grid-area: calculator;
+  justify-self: center;
+  margin-top: 5%;
+  font-family: Helvetica, sans-serif;
+  text-align: center;
+  color: rgb(70, 70, 70);
+}
+
+form label {
+  font-size: 1.5em;
+}
