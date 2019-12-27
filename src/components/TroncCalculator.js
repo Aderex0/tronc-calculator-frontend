@@ -4,7 +4,7 @@ import useTroncCalculatorStore from '../store/TroncCalculatorStore'
 
 const TroncCalculator = () => {
   //Controlled Form >> start
-  const [troncPercent, setTroncPercent] = useState(3.75)
+  const [troncPercent, setTroncPercent] = useState(0.0)
   const handleTroncPercentage = e => setTroncPercent(parseFloat(e.target.value))
 
   const [serviceCharge, setServiceCharge] = useState(0.0)

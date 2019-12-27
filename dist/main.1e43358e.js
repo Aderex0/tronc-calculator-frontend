@@ -31921,7 +31921,9 @@ var TroncOutput = function TroncOutput() {
   var receivedServiceCharge = (0, _TroncCalculatorStore.default)(function (state) {
     return state.receivedServiceCharge;
   });
-  return _react.default.createElement("div", null, receivedServiceCharge);
+  return _react.default.createElement("div", {
+    className: "received-service-charge"
+  }, receivedServiceCharge);
 };
 
 var _default = TroncOutput;
@@ -31954,7 +31956,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var TroncCalculator = function TroncCalculator() {
   //Controlled Form >> start
-  var _useState = (0, _react.useState)(3.75),
+  var _useState = (0, _react.useState)(0.0),
       _useState2 = _slicedToArray(_useState, 2),
       troncPercent = _useState2[0],
       setTroncPercent = _useState2[1];
@@ -32035,7 +32037,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _react = _interopRequireWildcard(require("react"));
+var _react = _interopRequireDefault(require("react"));
 
 var _TroncOutput = _interopRequireDefault(require("../components/TroncOutput"));
 
@@ -32045,15 +32047,10 @@ var _TroncCalculatorStore = _interopRequireDefault(require("../store/TroncCalcul
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
 var TroncCalculatorContainer = function TroncCalculatorContainer() {
   var displayCalculator = (0, _TroncCalculatorStore.default)(function (state) {
     return state.displayCalculator;
   });
-  (0, _react.useEffect)(function () {});
   return _react.default.createElement("div", null, displayCalculator ? _react.default.createElement(_TroncCalculator.default, null) : _react.default.createElement(_TroncOutput.default, null));
 };
 

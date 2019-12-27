@@ -6,7 +6,7 @@ const TroncOutput = () => {
     state => state.receivedServiceCharge
   )
 
-  return <div>{receivedServiceCharge}</div>
+  return <div className='received-service-charge'>{receivedServiceCharge}</div>
 }
 
 export default TroncOutput

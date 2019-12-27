@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import TroncOutput from '../components/TroncOutput'
 import TroncCalculator from '../components/TroncCalculator'
 
@@ -8,8 +8,6 @@ const TroncCalculatorContainer = () => {
   const displayCalculator = useTroncCalculatorStore(
     state => state.displayCalculator
   )
-
-  useEffect(() => {})
 
   return <div>{displayCalculator ? <TroncCalculator /> : <TroncOutput />}</div>
 }
